@@ -14,6 +14,40 @@ const validateHistory = [
         .escape(),
 ];
 
+/**
+ * @swagger
+ * tags:
+ *   name: History
+ *   description: User search history
+ */
+
+/**
+ * @swagger
+ * /api/history:
+ *   post:
+ *     summary: Save a search to history
+ *     tags: [History]
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [location]
+ *             properties:
+ *               location:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: Search saved
+ *       400:
+ *         description: Invalid location or duplicate
+ *       401:
+ *         description: Unauthorized
+ */
+
 // Add validation check middleware
 router.post(
     '/',
@@ -28,6 +62,21 @@ router.post(
     },
     addHistory
 );
+
+/**
+ * @swagger
+ * /api/history:
+ *   get:
+ *     summary: Fetch user's search history
+ *     tags: [History]
+ *     security:
+ *       - BearerAuth: []
+ *     responses:
+ *       200:
+ *         description: List of recent searches
+ *       401:
+ *         description: Unauthorized
+ */
 
 router.get('/', protect, getHistory);
 

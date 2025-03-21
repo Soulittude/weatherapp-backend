@@ -5,11 +5,15 @@ const cors = require('cors');
 const { notFound, errorHandler } = require('./middlewares/errorHandler');
 const apiLimiter = require('./middlewares/rateLimiter');
 
+const swaggerUI = require('swagger-ui-express');
+const swaggerSpec = require('./config/swagger');
+
 const auth = require('./routes/auth.routes'); // Add this line
 const history = require('./routes/history.routes'); // Add this line
 const weather = require('./routes/weather.routes'); // Add this line
 
 const axios = require('axios');
+
 
 require('dotenv').config();
 const app = express();
@@ -43,6 +47,9 @@ app.use("/api/history", history);
 // Error handling (MUST be after routes)
 app.use(notFound); // 404 handler
 app.use(errorHandler); // Global error handler
+
+//Docs
+app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerSpec));
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
