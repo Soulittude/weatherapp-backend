@@ -23,7 +23,7 @@ router.post('/', protect, validateHistory, async (req, res, next) => {
             throw createError(400, errors.array()[0].msg);
         }
 
-        const { location } = req.body;
+        const location = req.body.toLowerCase();
         const search = new WeatherSearch({
             location,
             user: req.user.id, // Associate with authenticated user
