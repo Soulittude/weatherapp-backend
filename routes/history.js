@@ -11,7 +11,9 @@ const validateHistory = [
         .trim()
         .notEmpty()
         .withMessage('Location is required')
-        .escape(),
+        .escape()
+        .matches(/^[a-zA-Z\s]+$/)
+        .withMessage('Location must contain only letters and spaces'),
 ];
 
 // Save search history (protected + validated)
