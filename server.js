@@ -20,6 +20,16 @@ app.use(apiLimiter);
 // Connect to MongoDB
 connectDB();
 
+// JSON Parsing Check
+app.use(express.json({ strict: true })); // Reject non-JSON requests
+app.use((err, req, res, next) => {
+  if (err instanceof SyntaxError) {
+    res.status(400).json({ error: "Invalid JSON syntax" });
+  } else {
+    next();
+  }
+});
+
 // Routes
 app.use("/api/auth", auth); // Add this line
 app.use("/api/weather", require("./routes/weather"));
