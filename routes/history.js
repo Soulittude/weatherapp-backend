@@ -11,25 +11,29 @@ const validateHistory = [
         .trim()
         .notEmpty()
         .withMessage('Location is required')
-        .escape()
-        .matches(/^[a-zA-Z\s]+$/)
-        .withMessage('Location must contain only letters and spaces'),
+        .matches(/^[a-zA-Z\s]+$/) // Allow letters and spaces
+        .withMessage('Location must contain only letters and spaces')
+        .escape(),
 ];
 
 // Save search history (protected + validated)
 router.post('/', protect, validateHistory, async (req, res, next) => {
     try {
-        // Check validation errors
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             throw createError(400, errors.array()[0].msg);
         }
 
-        const location = req.body.toLowerCase();
-        const search = new WeatherSearch({
-            location,
-            user: req.user.id, // Associate with authenticated user
-        });
+        const { location } = req.body;
+        const user = req.user.id;
+
+        // Check if location already exists for this user
+        const existingSearch = await WeatherSearch.findOne({ user, location });
+        if (existingSearch) {
+            throw createError(400, 'Location already exists in your history');
+        }
+
+        const search = new WeatherSearch({ location, user });
         await search.save();
         res.status(201).json(search);
     } catch (err) {
