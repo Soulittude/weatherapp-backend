@@ -1,12 +1,17 @@
 const express = require('express');
-const cors = require('cors');
 const connectDB = require('./config/db');
+
+const cors = require('cors');
 const { notFound, errorHandler } = require('./middlewares/errorHandler');
 const apiLimiter = require('./middlewares/rateLimiter');
-const auth = require('./routes/auth'); // Add this line
-const axios = require('axios');
-require('dotenv').config();
 
+const auth = require('./routes/auth.routes'); // Add this line
+const history = require('./routes/history.routes'); // Add this line
+const weather = require('./routes/weather.routes'); // Add this line
+
+const axios = require('axios');
+
+require('dotenv').config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
@@ -32,8 +37,8 @@ app.use((err, req, res, next) => {
 
 // Routes
 app.use("/api/auth", auth); // Add this line
-app.use("/api/weather", require("./routes/weather"));
-app.use("/api/history", require("./routes/history"));
+app.use("/api/weather", weather);
+app.use("/api/history", history);
 
 // Error handling (MUST be after routes)
 app.use(notFound); // 404 handler
