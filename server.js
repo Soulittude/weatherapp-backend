@@ -4,6 +4,7 @@ const connectDB = require('./config/db');
 const cors = require('cors');
 const { notFound, errorHandler } = require('./middlewares/errorHandler');
 const apiLimiter = require('./middlewares/rateLimiter');
+const morgan = require('morgan');
 
 const swaggerUI = require('swagger-ui-express');
 const swaggerSpec = require('./config/swagger');
@@ -22,6 +23,7 @@ const PORT = process.env.PORT || 5000;
 // Middleware
 app.use(cors());
 app.use(express.json());
+app.use(morgan('dev'));
 
 // Rate limiter (applies to all routes)
 app.use(apiLimiter);
@@ -44,12 +46,12 @@ app.use("/api/auth", auth); // Add this line
 app.use("/api/weather", weather);
 app.use("/api/history", history);
 
+//Docs
+app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerSpec));
+
 // Error handling (MUST be after routes)
 app.use(notFound); // 404 handler
 app.use(errorHandler); // Global error handler
-
-//Docs
-app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerSpec));
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
