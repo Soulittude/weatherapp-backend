@@ -11,7 +11,7 @@ exports.register = async (req, res, next) => {
         if (existingUser) throw createError(400, 'User already exists');
 
         const user = await User.create({ username, email, password });
-        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+        const token = jwt.sign({ id: user._id, username: user.username }, process.env.JWT_SECRET, {
             expiresIn: process.env.JWT_EXPIRE,
         });
 
@@ -31,7 +31,7 @@ exports.login = async (req, res, next) => {
         const isMatch = await user.matchPassword(password);
         if (!isMatch) throw createError(401, 'Invalid credentials');
 
-        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+        const token = jwt.sign({ id: user._id, username: user.username }, process.env.JWT_SECRET, {
             expiresIn: process.env.JWT_EXPIRE,
         });
 

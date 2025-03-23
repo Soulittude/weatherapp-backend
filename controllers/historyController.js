@@ -22,11 +22,12 @@ exports.addHistory = async (req, res, next) => {
 
 exports.getHistory = async (req, res, next) => {
     try {
+        res.set('Cache-Control', 'no-store');
         const history = await WeatherSearch.find({ user: req.user.id })
             .sort({ timestamp: -1 })
             .limit(5);
         res.json(history);
     } catch (err) {
-        next(err);
+        res.status(500).json({ error: 'Failed to fetch history' });
     }
 };
